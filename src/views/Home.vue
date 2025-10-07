@@ -1,11 +1,15 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import axios from "axios";
+import 'animate.css';
 
 const data = ref(null);
 const loading = ref(true);
 const isMenuOpen = ref(false);
-
+const isScrolled = ref(false);
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 50;
+};
 // Form data
 const formData = ref({
   fullName: '',
@@ -46,9 +50,28 @@ const submitForm = async () => {
     isSubmitting.value = false;
   }
 };
+const scrollToSection = (sectionId) => {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    const offset = 80;
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - offset;
 
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+    
+    isMenuOpen.value = false;
+  }
+};
 onMounted(() => {
   // Your existing mounted logic here
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
 });
 </script>
 
@@ -58,72 +81,97 @@ onMounted(() => {
     style="font-family: 'Source Sans Pro', sans-serif"
   >
     <!-- Navigation -->
-    <nav id="header" class="fixed w-full z-30 top-0 text-white">
-      <div
-        class="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 py-2"
-      >
+    <nav id="header" :class="['fixed', 'w-full', 'z-30', 'top-0', 'transition-all', 'duration-300', { 'nav-scrolled': isScrolled }]">
+      <div class="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 py-2">
         <div class="pl-4 flex items-center">
-          <a
-            class="toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
-            href="#"
-          >
-            ALTiUS ERP
+          <a @click.prevent="scrollToSection('hero')" class="toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="hero">
+            ALTiUS-ERP
           </a>
         </div>
         <div class="block lg:hidden pr-4">
-          <button
+          <button 
             @click="toggleMenu"
-            class="flex items-center p-1 text-pink-800 hover:text-gray-900 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-          >
-            <svg
-              class="fill-current h-6 w-6"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            class="flex items-center p-1 text-pink-800 hover:text-gray-900 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+            <svg class="fill-current h-6 w-6" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <title>Menu</title>
               <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
             </svg>
           </button>
         </div>
-        <div
-          :class="[
-            'w-full flex-grow lg:flex lg:items-center lg:w-auto mt-2 lg:mt-0 bg-white lg:bg-transparent text-black p-4 lg:p-0 z-20',
-            { hidden: !isMenuOpen },
-          ]"
-        >
+        <div 
+          :class="['w-full flex-grow lg:flex lg:items-center lg:w-auto mt-2 lg:mt-0 bg-white lg:bg-transparent text-black p-4 lg:p-0 z-20', { 'hidden': !isMenuOpen }]">
           <ul class="list-reset lg:flex justify-end flex-1 items-center">
             <li class="mr-3">
-              <a class="inline-block py-2 px-4 text-black font-bold no-underline" href="#"
-                >Active</a
+              <a 
+                @click.prevent="scrollToSection('hero')" 
+                class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4 cursor-pointer" 
+                href="#hero"
               >
+                Home
+              </a>
             </li>
             <li class="mr-3">
-              <a
-                class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"
-                href="#"
-                >link</a
+              <a 
+                @click.prevent="scrollToSection('masalah')" 
+                class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4 cursor-pointer" 
+                href="#fitur"
               >
+                Masalah
+              </a>
             </li>
             <li class="mr-3">
-              <a
-                class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"
-                href="#"
-                >link</a
+              <a 
+                @click.prevent="scrollToSection('fitur')" 
+                class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4 cursor-pointer" 
+                href="#fitur"
               >
+                Fitur
+              </a>
+            </li>
+            <li class="mr-3">
+              <a 
+                @click.prevent="scrollToSection('industri')" 
+                class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4 cursor-pointer" 
+                href="#industri"
+              >
+                Industri
+              </a>
+            </li>
+            <li class="mr-3">
+              <a 
+                @click.prevent="scrollToSection('client')" 
+                class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4 cursor-pointer" 
+                href="#client"
+              >
+                Client
+              </a>
+            </li>
+            <li class="mr-3">
+              <a 
+                @click.prevent="scrollToSection('tentang')" 
+                class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4 cursor-pointer" 
+                href="#tentang"
+              >
+                Tentang Kita
+              </a>
+            </li>
+            <li class="mr-3">
+              <a 
+                @click.prevent="scrollToSection('hubungi')" 
+                class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4 cursor-pointer" 
+                href="#hubungi"
+              >
+                Hubungi Kita
+              </a>
             </li>
           </ul>
-          <button
-            class="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full mt-4 lg:mt-0 py-4 px-8 shadow opacity-75 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-          >
-            Action
-          </button>
         </div>
       </div>
       <hr class="border-b border-gray-100 opacity-25 my-0 py-0" />
     </nav>
 
     <!-- Hero Section -->
-    <div class="hero-gradient pt-24">
+    <div id="hero" class="hero-gradient pt-24">
       <div
         class="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center"
       >
@@ -154,10 +202,10 @@ onMounted(() => {
     </div>
 
     <!-- Problem Section -->
-    <section class="erp-problems-section">
+    <section id="masalah" class="erp-problems-section">
       <div class="erp-problems-container">
         <h2
-          class="w-full my-2 text-3xl font-bold leading-tight text-center text-gray-800"
+          class="w-full my-2 text-3xl font-bold leading-tight text-center text-gray-800 animate__animated animate__slideInUp"
         >
           Bisnis ingin maju, tapi sering terjebak masalah yang sama?
         </h2>
@@ -288,7 +336,7 @@ onMounted(() => {
     </section>
 
     <!-- First Content Section -->
-    <section class="bg-white border-b py-8">
+    <section id="fitur" class="bg-white border-b py-8">
       <div class="container max-w-5xl mx-auto m-8">
         <h2
           class="w-full my-2 text-3xl font-bold leading-tight text-center text-gray-800"
@@ -369,7 +417,7 @@ onMounted(() => {
     </section>
 
     <!-- Industri Section -->
-    <section class="industry-solutions-section">
+    <section id="industri" class="industry-solutions-section">
       <div class="industry-container">
         <!-- Section Header -->
         <div class="industry-header">
@@ -624,7 +672,7 @@ onMounted(() => {
     </section>
 
     <!-- Section Client -->
-    <section class="sectionclient">
+    <section id="client" class="sectionclient">
       <div class="containerclient">
         <!-- Section Title -->
         <h2
@@ -732,7 +780,7 @@ onMounted(() => {
     <!-- Section Client -->
 
     <!-- Section About -->
-    <section class="testimonials-section">
+    <section id="tentang" class="testimonials-section">
       <div class="testimonials-container">
         <!-- Section Header -->
         <div class="testimonials-header">
@@ -839,7 +887,7 @@ onMounted(() => {
     <!-- Section About -->
 
     <!-- Section Contast Us -->
-    <section class="contact-section">
+    <section id="hubungi" class="contact-section">
     <div class="contact-container">
       
       <div class="contact-grid">
@@ -1175,7 +1223,49 @@ onMounted(() => {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700");
+/* Navigation Styling */
+nav {
+  transition: all 0.3s ease;
+}
 
+nav.nav-scrolled {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+nav.nav-scrolled .toggleColour {
+  color: #1f2937 !important;
+}
+
+nav.nav-scrolled .toggleColour svg {
+  fill: #1f2937;
+}
+
+nav.nav-scrolled #nav-content a {
+  color: #1f2937 !important;
+}
+
+nav.nav-scrolled #navAction {
+  background: linear-gradient(135deg, #00819b, #4a9cb8);
+  color: white !important;
+}
+
+nav #nav-content a {
+  color: white;
+}
+
+nav:not(.nav-scrolled) {
+  background: transparent;
+}
+
+nav:not(.nav-scrolled) .toggleColour {
+  color: white;
+}
+
+nav:not(.nav-scrolled) #nav-content a {
+  color: white;
+}
 .hero-gradient {
   background: linear-gradient(135deg, #003f5c, #00819b, #00bcd4);
 }
